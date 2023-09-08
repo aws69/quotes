@@ -18,9 +18,6 @@ public class QuoteAPI {
             String response = reader.readLine();
             reader.close();
 
-            // Parse the JSON response and create a Quote object
-            // Implement JSON parsing logic here
-            // Example: Using GSON library
             QuoteAPIResponse quoteAPIResponse = gson.fromJson(response, QuoteAPIResponse.class);
             return new Quote(quoteAPIResponse.getQuote().getBody(), quoteAPIResponse.getQuote().getAuthor());
         } catch (IOException e) {

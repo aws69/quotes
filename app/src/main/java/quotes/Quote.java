@@ -4,11 +4,16 @@ public class Quote {
     private String quoteText;
     private String author;
 
-    public String getQuoteText() {
-        return quoteText;
+    public Quote(Object body, String author) {
     }
 
     public String getAuthor() {
         return author;
     }
+
+
+    public Object getBody() {
+        return quoteText;
+    }
+
 }
