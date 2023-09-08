@@ -1,14 +1,16 @@
 package quotes;
 
 public class Quote {
-    private String quoteText;
+    private String quote;
     private String author;
 
-    public String getQuoteText() {
-        return quoteText;
+    public String getQuote() {
+        return quote;
     }
 
     public String getAuthor() {
         return author;
     }
+
+
 }

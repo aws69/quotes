@@ -1,30 +1,35 @@
 package quotes;
 
+import com.google.gson.Gson;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
+
+import java.io.*;
 
 public class QuoteAppTest {
+
     @Test
-    void testQuoteAppOutput() {
-        // Redirect standard output to capture printed output
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        PrintStream originalOut = System.out;
-        System.setOut(new PrintStream(outputStream));
+    void toStringReturnRandomQuoteAndItsAuthor() {
+        try {
+            Quote[] quotes = QuoteApp.parseJsonFile();
 
-        // Execute the main method of QuoteApp
-        QuoteApp.main(new String[]{});
 
-        // Restore standard output
-        System.setOut(originalOut);
+            assertNotNull(quotes);
 
-        // Convert the captured output to a string
-        String printedOutput = outputStream.toString().trim();
+            Quote randomQuote = QuoteApp.getRandomQuote(quotes);
 
-        // Assertions
-        assertNotNull(printedOutput);
-        assertTrue(printedOutput.contains("Quote: "));
-        assertTrue(printedOutput.contains("Author: "));
+            assertNotNull(randomQuote);
+            assertNotNull(randomQuote.getQuote());
+            assertNotNull(randomQuote.getAuthor());
+
+            String randomQuoteAsString = randomQuote.toString();
+
+            assertNotNull(randomQuoteAsString);
+
+            System.out.println("Quote: " + randomQuote.getQuote());
+            System.out.println("Author: " + randomQuote.getAuthor());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
