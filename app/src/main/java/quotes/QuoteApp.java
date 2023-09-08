@@ -1,36 +1,24 @@
 package quotes;
 
+import com.google.gson.Gson;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.Random;
 
 public class QuoteApp {
-    public static void main(String[] args) {
-        Quote randomQuote;
 
-        if (args.length > 0 && args[0].equalsIgnoreCase("local")) {
-            // Fetch a quote from your local file
-            randomQuote = getRandomQuoteFromFile();
-        } else {
-            // Fetch a quote from the API
-            randomQuote = QuoteAPI.getRandomQuoteFromAPI();
-            if (randomQuote != null) {
-                // Cache the quote to your local file
-                cacheQuoteToFile(randomQuote);
-            }
+    static Quote[] parseJsonFile() throws IOException {
+        Gson gson = new Gson();
+        try (BufferedReader reader = new BufferedReader(new FileReader("recentquotes.json"))) {
+            return gson.fromJson(reader, Quote[].class);
+
         }
 
-        if (randomQuote != null) {
-            System.out.println("Quote: " + randomQuote.getQuoteText());
-            System.out.println("Author: " + randomQuote.getAuthor());
-        } else {
-            System.out.println("No quotes found.");
-        }
-    }
-
-    private static Quote getRandomQuoteFromFile() {
-        // Implement logic to read a random quote from your local file
-    }
-
-    private static void cacheQuoteToFile(Quote quote) {
-        // Implement logic to append the quote to your local file
+    public static Quote getRandomQuote(Quote[] quotes) {
+        Random random = new Random();
+        int randomIndex = random.nextInt(quotes.length);
+        return quotes[randomIndex];
     }
 }
