@@ -13,8 +13,8 @@ public class QuoteApp {
         Gson gson = new Gson();
         try (BufferedReader reader = new BufferedReader(new FileReader("recentquotes.json"))) {
             return gson.fromJson(reader, Quote[].class);
+
         }
-    }
 
     public static Quote getRandomQuote(Quote[] quotes) {
         Random random = new Random();
