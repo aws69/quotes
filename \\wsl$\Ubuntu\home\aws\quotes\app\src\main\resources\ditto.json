@@ -1,0 +1,19 @@
+{
+  "quote": {
+    "id": 20,
+    "dialogue": false,
+    "favorite": false,
+    "tags": [
+      "funny",
+      "quotes",
+      "comedian"
+    ],
+    "url": "https://favqs.com/quotes/groucho-marx/20-before-i-speak-i-",
+    "favorites_count": 2,
+    "upvotes_count": 0,
+    "downvotes_count": 0,
+    "author": "Groucho Marx",
+    "author_permalink": "groucho-marx",
+    "body": "Before I speak, I have something important to say."
+  }
+}

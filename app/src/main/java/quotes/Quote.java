@@ -1,16 +1,24 @@
 package quotes;
 
 public class Quote {
-    private String quote;
-    private String author;
+    private String information;
+    Information quote  ;
 
-    public String getQuote() {
+    public String getInformation() {
+        return information;
+    }
+    public Information getquote() {
         return quote;
     }
 
-    public String getAuthor() {
-        return author;
-    }
 
+
+    @Override
+    public String toString() {
+        return "Quote{" +
+                "qotd_date='" + information + '\'' +
+                ", quote=" + quote +
+                '}';
+    }
 
 }
