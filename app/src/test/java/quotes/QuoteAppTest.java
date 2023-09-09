@@ -1,30 +1,58 @@
 package quotes;
 
-import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
+import com.google.gson.Gson;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
+import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+
+@RunWith(PowerMockRunner.class)
+@PrepareForTest({QuoteApp.class, URL.class, HttpURLConnection.class, BufferedReader.class, FileWriter.class})
 public class QuoteAppTest {
+
     @Test
-    void testQuoteAppOutput() {
-        // Redirect standard output to capture printed output
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        PrintStream originalOut = System.out;
-        System.setOut(new PrintStream(outputStream));
+    public void testFetchAndSerializeQuoteData_Success() throws Exception {
+        // Mock the URL and HttpURLConnection
+        URL mockUrl = PowerMockito.mock(URL.class);
+        HttpURLConnection mockConnection = PowerMockito.mock(HttpURLConnection.class);
 
-        // Execute the main method of QuoteApp
-        QuoteApp.main(new String[]{});
+        // Mock the BufferedReader and Gson
+        BufferedReader mockReader = PowerMockito.mock(BufferedReader.class);
+        Gson mockGson = PowerMockito.mock(Gson.class);
 
-        // Restore standard output
-        System.setOut(originalOut);
+        // Mock the FileWriter
+        FileWriter mockFileWriter = PowerMockito.mock(FileWriter.class);
 
-        // Convert the captured output to a string
-        String printedOutput = outputStream.toString().trim();
+        // Mock the System.out for console output
+        PrintStream mockConsole = PowerMockito.mock(PrintStream.class);
+        System.setOut(mockConsole);
 
-        // Assertions
-        assertNotNull(printedOutput);
-        assertTrue(printedOutput.contains("Quote: "));
-        assertTrue(printedOutput.contains("Author: "));
+
+        PowerMockito.whenNew(URL.class).withArguments("https://favqs.com/api/qotd").thenReturn(mockUrl);
+        PowerMockito.when(mockUrl.openConnection()).thenReturn(mockConnection);
+        PowerMockito.when(mockConnection.getInputStream()).thenReturn(new ByteArrayInputStream("sample_quote_data".getBytes()));
+        PowerMockito.whenNew(BufferedReader.class).withArguments(any(Reader.class)).thenReturn(mockReader);
+        when(mockReader.readLine()).thenReturn("sample_quote_json").thenReturn(null);
+
+        PowerMockito.whenNew(Gson.class).withNoArguments().thenReturn(mockGson);
+        when(mockGson.fromJson(anyString(), eq(Quote.class))).thenReturn(new Quote());
+
+        PowerMockito.whenNew(FileWriter.class).withArguments("\\\\wsl$\\Ubuntu\\home\\aws\\quotes\\app\\src\\main\\resources\\ditto.json").thenReturn(mockFileWriter);
+
+        // Act
+        QuoteApp.fetchAndSerializeQuoteData();
+
+        // Assert
+        verify(mockConsole).println("sample_quote_json"); // Verify that the console output is printed
+
     }
 }

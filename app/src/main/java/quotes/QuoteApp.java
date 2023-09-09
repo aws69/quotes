@@ -1,37 +1,40 @@
 package quotes;
 
-import java.util.Random;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
+import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
 public class QuoteApp {
     public static void main(String[] args) {
-        Quote randomQuote;
+        fetchAndSerializeQuoteData();
+    }
 
-        if (args.length > 0 && args[0].equalsIgnoreCase("local")) {
+    public static void fetchAndSerializeQuoteData() {
+        URL quotUrl=null;
 
-            randomQuote = getRandomQuoteFromFile();
-        } else {
+        try{
+            quotUrl = new URL("https://favqs.com/api/qotd");
 
-            randomQuote = QuoteAPI.getRandomQuoteFromAPI();
-            if (randomQuote != null) {
+            HttpURLConnection quoteUrlConnection = (HttpURLConnection) quotUrl.openConnection();
+            quoteUrlConnection.setRequestMethod("GET");
+            InputStreamReader reader = new InputStreamReader(quoteUrlConnection.getInputStream());
+            BufferedReader quoteBufferReader = new BufferedReader(reader);
+            String quoteData = quoteBufferReader.readLine();
+            System.out.println(quoteData);
 
-                cacheQuoteToFile(randomQuote);
+            Gson gson=new GsonBuilder().setPrettyPrinting().create();
+            Quote ditto = gson.fromJson(quoteData, Quote.class);
+
+            File dittoFile = new File("\\\\wsl$\\Ubuntu\\home\\aws\\quotes\\app\\src\\main\\resources\\ditto.json");
+            try (FileWriter writeToDittoFile= new FileWriter(dittoFile)){
+                gson.toJson(ditto, writeToDittoFile);
             }
+
+        }catch (IOException e){
+            System.out.println("invalid URl: "+quotUrl);
+            e.printStackTrace();
         }
-
-        if (randomQuote != null) {
-            System.out.println("Quote: " + randomQuote.getBody());
-            System.out.println("Author: " + randomQuote.getAuthor());
-        } else {
-            System.out.println("No quotes found.");
-        }
-    }
-
-    private static Quote getRandomQuoteFromFile() {
-
-
-    }
-
-    private static void cacheQuoteToFile(Quote quote) {
-
     }
 }
